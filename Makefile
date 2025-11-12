@@ -11,8 +11,8 @@ DATA_DIR = data
 MODEL_DIR = models
 RESULTS_DIR = results
 
-CORE_SRCS = $(SRC_DIR)/cnn.c $(SRC_DIR)/mnist_loader.c $(SRC_DIR)/model_io.c
-CORE_OBJS = cnn.o mnist_loader.o model_io.o
+CORE_SRCS = $(SRC_DIR)/cnn.c $(SRC_DIR)/mnist_loader.c $(SRC_DIR)/model_io.c $(SRC_DIR)/performance_metrics.c
+CORE_OBJS = cnn.o mnist_loader.o model_io.o performance_metrics.o
 
 TRAIN_BIN = train_cnn
 SERIAL_BIN = serial_inference
@@ -24,7 +24,7 @@ MNIST_FILES = $(DATA_DIR)/train-images-idx3-ubyte \
               $(DATA_DIR)/t10k-images-idx3-ubyte \
               $(DATA_DIR)/t10k-labels-idx1-ubyte
 
-.PHONY: all help setup train compile_all benchmark clean clean_all clean_results
+.PHONY: all help setup train compile_all benchmark benchmark_detailed analyze clean clean_all clean_results
 
 all:
 	@echo "=========================================================================="
@@ -35,7 +35,9 @@ all:
 	@echo "  make setup              - Download MNIST dataset"
 	@echo "  make train              - Train the CNN model (5-10 min)"
 	@echo "  make compile_all        - Compile all inference programs"
-	@echo "  make benchmark          - Run complete performance benchmark"
+	@echo "  make benchmark          - Run standard performance benchmark"
+	@echo "  make benchmark_detailed - Run enhanced benchmark with detailed metrics"
+	@echo "  make analyze            - Analyze benchmark results with insights"
 	@echo ""
 	@echo "Individual Targets:"
 	@echo "  make train_prog         - Compile training program only"
@@ -139,6 +141,22 @@ benchmark: compile_all
 	fi
 	@mkdir -p $(RESULTS_DIR)
 	@./scripts/run_benchmarks.sh
+
+benchmark_detailed: compile_all
+	@if [ ! -f "$(MODEL_DIR)/cnn_model.bin" ]; then \
+		echo "Error: Model not found. Please run 'make train' first."; \
+		exit 1; \
+	fi
+	@mkdir -p $(RESULTS_DIR)
+	@./scripts/run_benchmarks_detailed.sh
+
+analyze:
+	@if [ ! -f "$(RESULTS_DIR)/benchmark_results_detailed.txt" ]; then \
+		echo "Error: Detailed benchmark results not found."; \
+		echo "Please run 'make benchmark_detailed' first."; \
+		exit 1; \
+	fi
+	@python3 ./scripts/analyze_performance.py
 
 clean:
 	@echo "Removing compiled binaries..."

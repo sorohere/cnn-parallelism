@@ -1,0 +1,348 @@
+Enhanced CNN Inference Performance Benchmark Results
+=====================================================
+Date: 2025-11-12 19:39:37
+System: Darwin arm64
+CPU: Apple M2
+CPU Cores: 8
+RAM: 16 GB
+
+PERFORMANCE DIMENSIONS TRACKED:
+- Execution Time (total, inference, communication)
+- Throughput (images/second)
+- Latency (min, max, average per image)
+- Memory Usage (peak memory consumption)
+- Parallelization Metrics (speedup, efficiency)
+- Load Balancing (for data parallel)
+- Communication Overhead (for MPI implementations)
+- Layer-wise Timing (computation breakdown)
+
+================================================================================
+
+
+==================== SERIAL EXECUTION (BASELINE) ====================
+
+=================================================
+   SERIAL CNN INFERENCE (Baseline Performance)  
+=================================================
+
+[1/5] Initializing CNN layers...
+    ✓ Network initialized: Input(1×28×28) → Conv1(16×14×14) → Conv2(32×7×7) → FC1(200) → FC2(200) → Output(10)
+    ✓ Layer creation time: 0.010 seconds
+
+[2/5] Loading pre-trained model weights...
+    ✓ Model weights loaded successfully
+    ✓ Model load time: 0.000 seconds
+
+[3/5] Loading MNIST test dataset...
+    ✓ Loaded 10000 test images
+    ✓ Data load time: 0.001 seconds
+
+[4/5] Running serial inference on single CPU core...
+    (Processing 10000 images sequentially)
+
+    Progress: 1000/10000 images (10.0%)
+    Progress: 2000/10000 images (20.0%)
+    Progress: 3000/10000 images (30.0%)
+    Progress: 4000/10000 images (40.0%)
+    Progress: 5000/10000 images (50.0%)
+    Progress: 6000/10000 images (60.0%)
+    Progress: 7000/10000 images (70.0%)
+    Progress: 8000/10000 images (80.0%)
+    Progress: 9000/10000 images (90.0%)
+    Progress: 10000/10000 images (100.0%)
+
+[5/5] Results:
+
+========================================================================
+  SERIAL INFERENCE - PERFORMANCE SUMMARY
+========================================================================
+  Execution Metrics:
+    Total Time:              5.363 seconds
+    Inference Time:          5.351 seconds
+    Model Load Time:         0.000 seconds
+    Data Load Time:          0.001 seconds
+
+  Layer-wise Timing:
+
+  Throughput & Latency:
+    Throughput:              1868.67 images/second
+    Avg Latency per Image:   0.535 ms
+    Min Latency:             0.520 ms
+    Max Latency:             11.958 ms
+
+  Memory Usage:
+    Peak Memory:             11.77 MB
+
+  Accuracy:
+    Correct Predictions:     9732 / 10000
+    Accuracy:                97.32%
+========================================================================
+
+DETAILED ANALYSIS:
+------------------
+
+  Time Distribution:
+
+Performance Baseline:
+  This is SERIAL execution (1 CPU core)
+  Use this as baseline for parallel comparison
+
+
+==================== DATA PARALLEL EXECUTION (2 processes) ====================
+
+i=0
+i=1000
+i=2000
+i=3000
+i=4000
+
+
+========================================================================
+  DATA PARALLEL INFERENCE - PERFORMANCE SUMMARY
+========================================================================
+  Execution Metrics:
+    Total Time:              2.792 seconds
+    Inference Time:          2.781 seconds
+    Model Load Time:         0.011 seconds
+    Data Load Time:          0.001 seconds
+    Communication Time:      0.004 seconds (0.2%)
+      - MPI Send Time:       0.000 seconds
+      - MPI Recv Time:       0.000 seconds
+      - MPI Wait Time:       0.000 seconds
+
+  Layer-wise Timing:
+
+  Throughput & Latency:
+    Throughput:              3596.36 images/second
+    Avg Latency per Image:   0.278 ms
+    Min Latency:             0.548 ms
+    Max Latency:             0.992 ms
+
+  Memory Usage:
+    Peak Memory:             22.62 MB
+
+  Parallelization Metrics:
+    Number of Processes:     2
+    Speedup:                 0.00x
+    Parallel Efficiency:     0.00%
+    Load Imbalance:          0.19%
+
+  Accuracy:
+    Correct Predictions:     9732 / 10000
+    Accuracy:                97.32%
+========================================================================
+
+DETAILED ANALYSIS:
+------------------
+  Computation Time:        2.776 seconds (99.8%)
+  Communication Overhead:  0.004 seconds (0.2%)
+  Ideal Time (Perfect Scaling): inf seconds
+  Scaling Loss:            -inf seconds
+
+  Time Distribution:
+
+Load Balancing Analysis:
+  Max Process Time:        2.781 seconds
+  Min Process Time:        2.775 seconds
+  Time Variance:           0.005 seconds
+  Load Imbalance Factor:   0.19%
+
+  ✓ Excellent load balance (< 5% imbalance)
+
+
+==================== DATA PARALLEL EXECUTION (4 processes) ====================
+
+i=0
+i=1000
+i=2000
+
+
+========================================================================
+  DATA PARALLEL INFERENCE - PERFORMANCE SUMMARY
+========================================================================
+  Execution Metrics:
+    Total Time:              1.499 seconds
+    Inference Time:          1.486 seconds
+    Model Load Time:         0.011 seconds
+    Data Load Time:          0.001 seconds
+    Communication Time:      0.009 seconds (0.6%)
+      - MPI Send Time:       0.000 seconds
+      - MPI Recv Time:       0.000 seconds
+      - MPI Wait Time:       0.000 seconds
+
+  Layer-wise Timing:
+
+  Throughput & Latency:
+    Throughput:              6730.99 images/second
+    Avg Latency per Image:   0.149 ms
+    Min Latency:             0.569 ms
+    Max Latency:             8.747 ms
+
+  Memory Usage:
+    Peak Memory:             22.75 MB
+
+  Parallelization Metrics:
+    Number of Processes:     4
+    Speedup:                 0.00x
+    Parallel Efficiency:     0.00%
+    Load Imbalance:          0.82%
+
+  Accuracy:
+    Correct Predictions:     9732 / 10000
+    Accuracy:                97.32%
+========================================================================
+
+DETAILED ANALYSIS:
+------------------
+  Computation Time:        1.476 seconds (99.4%)
+  Communication Overhead:  0.009 seconds (0.6%)
+  Ideal Time (Perfect Scaling): inf seconds
+  Scaling Loss:            -inf seconds
+
+  Time Distribution:
+
+Load Balancing Analysis:
+  Max Process Time:        1.486 seconds
+  Min Process Time:        1.473 seconds
+  Time Variance:           0.012 seconds
+  Load Imbalance Factor:   0.82%
+
+  ✓ Excellent load balance (< 5% imbalance)
+
+
+==================== DATA PARALLEL EXECUTION (8 processes) ====================
+
+i=0
+i=1000
+
+
+========================================================================
+  DATA PARALLEL INFERENCE - PERFORMANCE SUMMARY
+========================================================================
+  Execution Metrics:
+    Total Time:              0.998 seconds
+    Inference Time:          0.985 seconds
+    Model Load Time:         0.013 seconds
+    Data Load Time:          0.003 seconds
+    Communication Time:      0.011 seconds (1.1%)
+      - MPI Send Time:       0.000 seconds
+      - MPI Recv Time:       0.000 seconds
+      - MPI Wait Time:       0.000 seconds
+
+  Layer-wise Timing:
+
+  Throughput & Latency:
+    Throughput:              10150.70 images/second
+    Avg Latency per Image:   0.099 ms
+    Min Latency:             0.569 ms
+    Max Latency:             5.965 ms
+
+  Memory Usage:
+    Peak Memory:             22.77 MB
+
+  Parallelization Metrics:
+    Number of Processes:     8
+    Speedup:                 0.00x
+    Parallel Efficiency:     0.00%
+    Load Imbalance:          6.47%
+
+  Accuracy:
+    Correct Predictions:     9732 / 10000
+    Accuracy:                97.32%
+========================================================================
+
+DETAILED ANALYSIS:
+------------------
+  Computation Time:        0.974 seconds (98.9%)
+  Communication Overhead:  0.011 seconds (1.1%)
+  Ideal Time (Perfect Scaling): inf seconds
+  Scaling Loss:            -inf seconds
+
+  Time Distribution:
+
+Load Balancing Analysis:
+  Max Process Time:        0.985 seconds
+  Min Process Time:        0.921 seconds
+  Time Variance:           0.064 seconds
+  Load Imbalance Factor:   6.47%
+
+  ⚠ Good load balance (< 15% imbalance)
+
+
+==================== PIPELINE PARALLEL EXECUTION (5 processes) ====================
+
+in cpu 0
+in cpu 4
+in cpu 3
+in cpu 1
+in cpu 2
+in cpu 0 done
+in cpu 1 done
+in cpu 2 done
+in cpu 3 done
+in cpu 4  done
+ntests=10000, ncorrect=9732
+Total correct predictions: 9732
+Total execution time: 3.373750 seconds
+
+Pipeline Performance Summary:
+  Speedup: 1.58x
+  Efficiency: 30.0%
+  Accuracy: 97.00%
+
+================================================================================
+                     COMPARATIVE PERFORMANCE ANALYSIS
+================================================================================
+
+PERFORMANCE DIMENSIONS COMPARISON:
+
+1. EXECUTION TIME & THROUGHPUT
+   - Serial provides baseline performance
+   - Data parallel shows near-linear scaling up to 4 processes
+   - Pipeline has higher overhead due to communication
+
+2. LATENCY CHARACTERISTICS
+   - Min/Max/Avg latency shows variance in processing time
+   - Data parallel maintains consistent latency per image
+   - Pipeline may show higher latency due to stage dependencies
+
+3. MEMORY EFFICIENCY
+   - Serial: Single model copy, lowest memory footprint
+   - Data parallel: N copies of model (N = processes)
+   - Pipeline: Single model copy distributed across processes
+
+4. PARALLELIZATION EFFICIENCY
+   - Speedup: How much faster than serial
+   - Efficiency: Speedup / Number of Processes
+   - Good efficiency > 80%, Excellent > 90%
+
+5. LOAD BALANCING (Data Parallel)
+   - Measures work distribution across processes
+   - <5% imbalance = Excellent
+   - 5-15% imbalance = Good
+   - >15% imbalance = Poor
+
+6. COMMUNICATION OVERHEAD (MPI)
+   - Time spent in MPI operations vs computation
+   - Lower overhead = better scaling
+   - Pipeline has highest due to layer-to-layer transfers
+
+KEY INSIGHTS FOR OPTIMIZATION:
+
+Data Parallel Strategy:
+  ✓ Best for: Independent tasks (image classification)
+  ✓ Scales well: Up to memory bandwidth limits
+  ✗ Limitation: Requires full model replication
+
+Pipeline Parallel Strategy:
+  ✓ Best for: Very large models that don't fit in single process
+  ✓ Memory efficient: Model distributed across processes
+  ✗ Limitation: High communication overhead, sequential dependencies
+
+RECOMMENDATIONS:
+- Use Data Parallel for inference workloads (this use case)
+- Use Pipeline Parallel for training very large models
+- Consider hybrid approaches for best of both worlds
+- Monitor load balance and communication overhead for optimization
+
+================================================================================
