@@ -1,0 +1,36 @@
+# Compiled binaries
+train_cnn
+serial_inference
+data_parallel_inference
+pipeline_parallel_inference
+*.o
+*.out
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Benchmark results
+results/benchmark_results.txt
+results/*.log
+
+# Dataset (large files - download via make setup)
+data/train-images-idx3-ubyte
+data/train-labels-idx1-ubyte
+data/t10k-images-idx3-ubyte
+data/t10k-labels-idx1-ubyte
+
+# Trained models (can be regenerated via make train)
+models/*.txt
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temporary files
+temp.txt
+*.tmp
