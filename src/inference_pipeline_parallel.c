@@ -5,6 +5,7 @@
 #include <string.h>
 #include <mpi.h>
 #include "cnn.h"
+#include "model_io.h"
 
 #ifdef __APPLE__
 #include <libkern/OSByteOrder.h>
@@ -166,57 +167,17 @@ int main(int argc, char *argv[])
     /* Output layer - 10 nodes. */
     Layer *loutput = Layer_create_full(lfull2, 10, 0.1);
 
-    /* Read the training images & labels. */
-
-    /* Training finished. */
-    FILE *linputf = fopen("./models/linputf.txt", "r");
-    if (linputf == NULL)
+    Layer *layers[] = {linput, lconv1, lconv2, lfull1, lfull2, loutput};
+    
+    if (model_load("./models/cnn_model.bin", layers, 6) != 0)
     {
-        printf("Error opening ./models/linputf.txt for reading.\n");
+        if (id == 0)
+        {
+            fprintf(stderr, "Failed to load model\n");
+        }
+        MPI_Finalize();
         return 1;
     }
-
-    FILE *lconv1f = fopen("./models/lconv1f.txt", "r");
-    if (lconv1f == NULL)
-    {
-        printf("Error opening ./models/lconv1f.txt for reading.\n");
-        return 1;
-    }
-
-    FILE *lconv2f = fopen("./models/lconv2f.txt", "r");
-    if (lconv2f == NULL)
-    {
-        printf("Error opening ./models/lconv2f.txt for reading.\n");
-        return 1;
-    }
-
-    FILE *lfull1f = fopen("./models/lfull1f.txt", "r");
-    if (lfull1f == NULL)
-    {
-        printf("Error opening ./models/lfull1f.txt for reading.\n");
-        return 1;
-    }
-
-    FILE *lfull2f = fopen("./models/lfull2f.txt", "r");
-    if (lfull2f == NULL)
-    {
-        printf("Error opening ./models/lfull2f.txt for reading.\n");
-        return 1;
-    }
-
-    FILE *loutputf = fopen("./models/loutputf.txt", "r");
-    if (loutputf == NULL)
-    {
-        printf("Error opening ./models/loutputf.txt for reading.\n");
-        return 1;
-    }
-
-    Load_pretrainedValues(linput, linputf);
-    Load_pretrainedValues(lconv1, lconv1f);
-    Load_pretrainedValues(lconv2, lconv2f);
-    Load_pretrainedValues(lfull1, lfull1f);
-    Load_pretrainedValues(lfull2, lfull2f);
-    Load_pretrainedValues(loutput, loutputf);
 
     /* Read the test images & labels. */
 
@@ -1475,14 +1436,6 @@ int main(int argc, char *argv[])
     Layer_destroy(lfull1);
     Layer_destroy(lfull2);
     Layer_destroy(loutput);
-
-    // Close file
-    fclose(linputf);
-    fclose(lconv1f);
-    fclose(lconv2f);
-    fclose(lfull1f);
-    fclose(lfull2f);
-    fclose(loutputf);
 
     MPI_Finalize();
     return 0;
