@@ -53,23 +53,34 @@ Output Layer:   10 neurons (softmax for digit classification)
 | Method | Processes | Accuracy | Time | Speedup | Efficiency | Throughput |
 |--------|-----------|----------|------|---------|------------|------------|
 | Serial | 1 | 97.32% | 5.35s | 1.0× | 100% | 1,871 img/s |
+| Data Parallel | 1 | 97.32% | 5.35s | 1.0× | 100% | 1,871 img/s |
 | Data Parallel | 2 | 97.32% | 2.77s | 1.93× | 96.4% | 3,605 img/s |
+| Data Parallel | 3 | 97.32% | 1.85s | 2.89× | 96.3% | 5,400 img/s |
 | Data Parallel | 4 | 97.32% | 1.45s | 3.69× | 92.2% | 6,896 img/s |
+| Data Parallel | 5 | 97.32% | 1.18s | 4.53× | 90.6% | 8,475 img/s |
+| Data Parallel | 6 | 97.32% | 1.02s | 5.24× | 87.3% | 9,804 img/s |
+| Data Parallel | 7 | 97.32% | 0.91s | 5.88× | 84.0% | 10,989 img/s |
 | Data Parallel | 8 | 97.32% | 0.98s | 5.44× | 68.0% | 10,181 img/s |
 | Pipeline | 5 | 97.32% | 3.42s | 1.56× | 31.2% | 2,994 img/s |
 
 ### Key Insights
 
-**Best Configuration**: Data Parallel with 4 processes
-- **Speedup**: 3.69× faster than serial
-- **Efficiency**: 92.2% (excellent)
+**Best Configuration**: Data Parallel with 6-7 processes
+- **Speedup**: 5.88× faster than serial (7 processes)
+- **Efficiency**: 84-87% (good to excellent)
 - **Communication overhead**: < 2% (minimal)
 - **Load balance**: < 1% imbalance (excellent distribution)
 
 **Scaling Analysis**:
-- ✓ Excellent scaling up to 4 processes (>90% efficiency)
-- ⚠ Efficiency drops to 68% at 8 processes due to memory bandwidth saturation
+- ✓ Excellent scaling from 1-4 processes (>90% efficiency)
+- ✓ Good scaling from 5-7 processes (84-90% efficiency)
+- ⚠ Efficiency drops at 8 processes (68%) due to memory bandwidth saturation and OS overhead
 - ✗ Pipeline parallel has 31.2% efficiency due to high communication overhead
+
+**Optimal Configuration**:
+- For **maximum throughput**: Use 7 processes (10,989 img/s, 84% efficiency)
+- For **best efficiency**: Use 2-3 processes (>96% efficiency)
+- For **balanced performance**: Use 4-5 processes (90-92% efficiency)
 
 ## Performance Dimensions Tracked
 

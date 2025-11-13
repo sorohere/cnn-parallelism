@@ -107,7 +107,7 @@ SERIAL_TIME=$(grep "Inference Time:" $RESULTS_FILE | tail -1 | awk '{print $3}')
 echo -e "${BLUE}[Step 3/5] Running Data Parallel Inference (MPI)...${NC}"
 echo "=================================================================================="
 
-DATA_PARALLEL_PROCS=(2 4 8)
+DATA_PARALLEL_PROCS=(1 2 3 4 5 6 7 8)
 
 for NP in "${DATA_PARALLEL_PROCS[@]}"; do
     echo -e "\n${YELLOW}Testing with $NP processes...${NC}"
@@ -257,7 +257,7 @@ echo "  ✓ Communication overhead (MPI)"
 echo ""
 echo "Summary:"
 echo "  - Serial baseline: $(grep "Inference Time:" $RESULTS_FILE | head -1 | awk '{print $3}') seconds"
-echo "  - Best data parallel: $(grep -A 10 "DATA PARALLEL" $RESULTS_FILE | grep "Inference Time:" | awk '{print $3}' | head -1) seconds (2P)"
+echo "  - Data parallel tested: 1P, 2P, 3P, 4P, 5P, 6P, 7P, 8P (all 8 cores)"
 echo "  - Pipeline parallel: $(grep "Total execution time:" $RESULTS_FILE | tail -1 | awk '{print $4}') seconds (5P)"
 echo ""
 echo "Next steps:"

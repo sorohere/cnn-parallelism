@@ -1,26 +1,35 @@
-Enhanced CNN Inference Performance Benchmark Results
-=====================================================
-Date: 2025-11-13 12:17:42
-System: Darwin arm64
-CPU: Apple M2
-CPU Cores: 8
-RAM: 16 GB
+saurabh@sORo cnn-parallelism % rm -rf output.log 
+saurabh@sORo cnn-parallelism % clear
+saurabh@sORo cnn-parallelism % script output.log
+Script started, output file is output.log
+saurabh@sORo cnn-parallelism % make benchmark_detailed
 
-PERFORMANCE DIMENSIONS TRACKED:
-- Execution Time (total, inference, communication)
-- Throughput (images/second)
-- Latency (min, max, average per image)
-- Memory Usage (peak memory consumption)
-- Parallelization Metrics (speedup, efficiency)
-- Load Balancing (for data parallel)
-- Communication Overhead (for MPI implementations)
-- Layer-wise Timing (computation breakdown)
+==========================================================================
+✓ All inference programs compiled successfully!
+==========================================================================
 
+Available executables:
+  ./serial_inference                - Serial baseline
+  ./data_parallel_inference         - Data parallel (MPI)
+  ./pipeline_parallel_inference     - Pipeline parallel (MPI)
+
+Next step: make benchmark
+==========================================================================
+================================================================================
+     ENHANCED CNN INFERENCE BENCHMARK WITH DETAILED PERFORMANCE METRICS        
 ================================================================================
 
+Timestamp: 2025-11-13 12:17:42
+System: Darwin arm64
+CPU cores: 8
+CPU model: Apple M2
+RAM: 16 GB
 
-==================== SERIAL EXECUTION (BASELINE) ====================
+[Step 1/5] Checking prerequisites...
+✓ All prerequisites met
 
+[Step 2/5] Running Serial Inference (Baseline)...
+==================================================================================
 =================================================
    SERIAL CNN INFERENCE (Baseline Performance)  
 =================================================
@@ -87,9 +96,12 @@ Performance Baseline:
   This is SERIAL execution (1 CPU core)
   Use this as baseline for parallel comparison
 
+✓ Serial inference completed
 
-==================== DATA PARALLEL EXECUTION (1 processes) ====================
+[Step 3/5] Running Data Parallel Inference (MPI)...
+==================================================================================
 
+Testing with 1 processes...
 i=0
 i=1000
 i=2000
@@ -144,9 +156,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 1 processes completed
+  → Speedup: 1.00x, Efficiency: 100.0%
 
-==================== DATA PARALLEL EXECUTION (2 processes) ====================
 
+Testing with 2 processes...
 i=0
 i=1000
 i=2000
@@ -206,9 +220,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 2 processes completed
+  → Speedup: 1.90x, Efficiency: 90.0%
 
-==================== DATA PARALLEL EXECUTION (3 processes) ====================
 
+Testing with 3 processes...
 i=0
 i=1000
 i=2000
@@ -267,9 +283,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 3 processes completed
+  → Speedup: 2.75x, Efficiency: 90.0%
 
-==================== DATA PARALLEL EXECUTION (4 processes) ====================
 
+Testing with 4 processes...
 i=0
 i=1000
 i=2000
@@ -327,9 +345,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 4 processes completed
+  → Speedup: 3.66x, Efficiency: 90.0%
 
-==================== DATA PARALLEL EXECUTION (5 processes) ====================
 
+Testing with 5 processes...
 i=0
 i=1000
 
@@ -386,9 +406,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 5 processes completed
+  → Speedup: 4.07x, Efficiency: 80.0%
 
-==================== DATA PARALLEL EXECUTION (6 processes) ====================
 
+Testing with 6 processes...
 i=0
 i=1000
 
@@ -445,9 +467,11 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 6 processes completed
+  → Speedup: 4.53x, Efficiency: 70.0%
 
-==================== DATA PARALLEL EXECUTION (7 processes) ====================
 
+Testing with 7 processes...
 i=0
 i=1000
 
@@ -504,9 +528,11 @@ Load Balancing Analysis:
 
   ⚠ Good load balance (< 15% imbalance)
 
+✓ Data parallel with 7 processes completed
+  → Speedup: 4.95x, Efficiency: 70.0%
 
-==================== DATA PARALLEL EXECUTION (8 processes) ====================
 
+Testing with 8 processes...
 i=0
 i=1000
 
@@ -563,9 +589,13 @@ Load Balancing Analysis:
 
   ✓ Excellent load balance (< 5% imbalance)
 
+✓ Data parallel with 8 processes completed
+  → Speedup: 5.41x, Efficiency: 60.0%
 
-==================== PIPELINE PARALLEL EXECUTION (5 processes) ====================
+[Step 4/5] Running Pipeline Parallel Inference (MPI)...
+==================================================================================
 
+Testing with 5 processes (5-stage pipeline)...
 in cpu 3
 in cpu 4
 in cpu 2
@@ -579,65 +609,244 @@ in cpu 4  done
 ntests=10000, ncorrect=9732
 Total correct predictions: 9732
 Total execution time: 3.367824 seconds
+✓ Pipeline parallel with 5 processes completed
+  → Speedup: 1.56x, Efficiency: 30.0%
 
-Pipeline Performance Summary:
-  Speedup: 1.56x
-  Efficiency: 30.0%
-  Accuracy: 97.00%
-
-================================================================================
-                     COMPARATIVE PERFORMANCE ANALYSIS
-================================================================================
-
-PERFORMANCE DIMENSIONS COMPARISON:
-
-1. EXECUTION TIME & THROUGHPUT
-   - Serial provides baseline performance
-   - Data parallel shows near-linear scaling up to 4 processes
-   - Pipeline has higher overhead due to communication
-
-2. LATENCY CHARACTERISTICS
-   - Min/Max/Avg latency shows variance in processing time
-   - Data parallel maintains consistent latency per image
-   - Pipeline may show higher latency due to stage dependencies
-
-3. MEMORY EFFICIENCY
-   - Serial: Single model copy, lowest memory footprint
-   - Data parallel: N copies of model (N = processes)
-   - Pipeline: Single model copy distributed across processes
-
-4. PARALLELIZATION EFFICIENCY
-   - Speedup: How much faster than serial
-   - Efficiency: Speedup / Number of Processes
-   - Good efficiency > 80%, Excellent > 90%
-
-5. LOAD BALANCING (Data Parallel)
-   - Measures work distribution across processes
-   - <5% imbalance = Excellent
-   - 5-15% imbalance = Good
-   - >15% imbalance = Poor
-
-6. COMMUNICATION OVERHEAD (MPI)
-   - Time spent in MPI operations vs computation
-   - Lower overhead = better scaling
-   - Pipeline has highest due to layer-to-layer transfers
-
-KEY INSIGHTS FOR OPTIMIZATION:
-
-Data Parallel Strategy:
-  ✓ Best for: Independent tasks (image classification)
-  ✓ Scales well: Up to memory bandwidth limits
-  ✗ Limitation: Requires full model replication
-
-Pipeline Parallel Strategy:
-  ✓ Best for: Very large models that don't fit in single process
-  ✓ Memory efficient: Model distributed across processes
-  ✗ Limitation: High communication overhead, sequential dependencies
-
-RECOMMENDATIONS:
-- Use Data Parallel for inference workloads (this use case)
-- Use Pipeline Parallel for training very large models
-- Consider hybrid approaches for best of both worlds
-- Monitor load balance and communication overhead for optimization
+[Step 5/5] Generating Comparative Analysis...
+==================================================================================
+✓ Comparative analysis generated
 
 ================================================================================
+                    ENHANCED BENCHMARK COMPLETED                               
+================================================================================
+
+Results saved to: results/benchmark_results_detailed.txt
+
+Performance dimensions tracked:
+  ✓ Execution time (total, inference, communication)
+  ✓ Throughput (images/second)
+  ✓ Latency (min, max, average)
+  ✓ Memory usage (peak consumption)
+  ✓ Parallelization metrics (speedup, efficiency)
+  ✓ Load balancing (data parallel)
+  ✓ Communication overhead (MPI)
+
+Summary:
+  - Serial baseline: 5.276 seconds
+  - Data parallel tested: 1P, 2P, 3P, 4P, 5P, 6P, 7P, 8P (all 8 cores)
+  - Pipeline parallel: 3.367824 seconds (5P)
+
+Next steps:
+  1. Review results/benchmark_results_detailed.txt for detailed multi-dimensional analysis
+  2. Compare metrics across implementations
+  3. Identify bottlenecks (communication, load imbalance, memory)
+  4. Optimize based on insights
+
+================================================================================
+saurabh@sORo cnn-parallelism % make analyze 
+
+====================================================================================================
+                              PERFORMANCE METRICS SUMMARY
+====================================================================================================
+Implementation            Processes  Time(s)    Throughput      Speedup    Efficiency   Memory(MB)  
+----------------------------------------------------------------------------------------------------
+Serial                    1          5.276      1895.4 img/s    1.00x      100.0%       11.8        
+Data Parallel (2P)        2          2.767      3614.0 img/s    1.91x      95.3%        22.4        
+Data Parallel (3P)        3          1.912      5230.2 img/s    2.76x      92.0%        22.6        
+Data Parallel (4P)        4          1.440      6942.9 img/s    3.66x      91.6%        22.6        
+Data Parallel (5P)        5          1.296      7716.5 img/s    4.07x      81.4%        22.6        
+Data Parallel (6P)        6          1.164      8591.0 img/s    4.53x      75.5%        22.5        
+Data Parallel (7P)        7          1.064      9394.3 img/s    4.96x      70.8%        22.7        
+Data Parallel (8P)        8          0.975      10252.4 img/s   5.41x      67.6%        22.7        
+Pipeline (5P)             5          3.368      N/A             1.57x      31.3%        0.0         
+====================================================================================================
+
+====================================================================================================
+                                   DETAILED ANALYSIS
+====================================================================================================
+
+1. SCALING EFFICIENCY ANALYSIS
+--------------------------------------------------
+  2 Processes: Speedup=1.91x, Efficiency=95.3%
+    Status: ✓ Excellent
+
+  3 Processes: Speedup=2.76x, Efficiency=92.0%
+    Status: ✓ Excellent
+    Scaling from 2P to 3P: 1.45x
+
+  4 Processes: Speedup=3.66x, Efficiency=91.6%
+    Status: ✓ Excellent
+    Scaling from 3P to 4P: 1.33x
+
+  5 Processes: Speedup=4.07x, Efficiency=81.4%
+    Status: ✓ Good
+    Scaling from 4P to 5P: 1.11x
+
+  6 Processes: Speedup=4.53x, Efficiency=75.5%
+    Status: ✓ Good
+    Scaling from 5P to 6P: 1.11x
+
+  7 Processes: Speedup=4.96x, Efficiency=70.8%
+    Status: ⚠ Fair
+    Scaling from 6P to 7P: 1.09x
+
+  8 Processes: Speedup=5.41x, Efficiency=67.6%
+    Status: ⚠ Fair
+    Scaling from 7P to 8P: 1.09x
+
+
+2. LATENCY ANALYSIS
+--------------------------------------------------
+  Serial:
+    Min: 0.520 ms
+    Avg: 0.528 ms
+    Max: 1.109 ms
+    Variance: 0.589 ms
+
+  Data Parallel (2P):
+    Min: 0.548 ms
+    Avg: 0.277 ms
+    Max: 0.977 ms
+    Variance: 0.429 ms
+
+  Data Parallel (3P):
+    Min: 0.569 ms
+    Avg: 0.191 ms
+    Max: 1.121 ms
+    Variance: 0.552 ms
+
+  Data Parallel (4P):
+    Min: 0.569 ms
+    Avg: 0.144 ms
+    Max: 1.678 ms
+    Variance: 1.109 ms
+
+  Data Parallel (5P):
+    Min: 0.569 ms
+    Avg: 0.130 ms
+    Max: 4.138 ms
+    Variance: 3.569 ms
+
+  Data Parallel (6P):
+    Min: 0.569 ms
+    Avg: 0.116 ms
+    Max: 6.324 ms
+    Variance: 5.755 ms
+
+  Data Parallel (7P):
+    Min: 0.569 ms
+    Avg: 0.106 ms
+    Max: 5.330 ms
+    Variance: 4.761 ms
+
+  Data Parallel (8P):
+    Min: 0.569 ms
+    Avg: 0.098 ms
+    Max: 16.672 ms
+    Variance: 16.103 ms
+
+
+3. COMMUNICATION OVERHEAD ANALYSIS
+--------------------------------------------------
+  Data Parallel (2P):
+    Computation: 100.0%
+    Communication: 0.0%
+    → Excellent (<5% overhead)
+
+  Data Parallel (3P):
+    Computation: 100.0%
+    Communication: 0.0%
+    → Excellent (<5% overhead)
+
+  Data Parallel (4P):
+    Computation: 99.7%
+    Communication: 0.3%
+    → Excellent (<5% overhead)
+
+  Data Parallel (5P):
+    Computation: 95.3%
+    Communication: 4.7%
+    → Excellent (<5% overhead)
+
+  Data Parallel (6P):
+    Computation: 96.4%
+    Communication: 3.6%
+    → Excellent (<5% overhead)
+
+  Data Parallel (7P):
+    Computation: 98.1%
+    Communication: 1.9%
+    → Excellent (<5% overhead)
+
+  Data Parallel (8P):
+    Computation: 97.7%
+    Communication: 2.3%
+    → Excellent (<5% overhead)
+
+
+4. LOAD BALANCING ANALYSIS
+--------------------------------------------------
+  Data Parallel (2P): 0.1% imbalance
+    ✓ Excellent load distribution
+
+  Data Parallel (3P): 0.1% imbalance
+    ✓ Excellent load distribution
+
+  Data Parallel (4P): 0.3% imbalance
+    ✓ Excellent load distribution
+
+  Data Parallel (5P): 4.5% imbalance
+    ✓ Excellent load distribution
+
+  Data Parallel (6P): 3.6% imbalance
+    ✓ Excellent load distribution
+
+  Data Parallel (7P): 6.9% imbalance
+    ✓ Good load distribution
+
+  Data Parallel (8P): 4.9% imbalance
+    ✓ Excellent load distribution
+
+
+5. MEMORY EFFICIENCY ANALYSIS
+--------------------------------------------------
+  Serial baseline: 11.8 MB
+  Data Parallel (2P): 22.4 MB total, 11.2 MB/process
+    Memory overhead vs serial: 90.2%
+  Data Parallel (3P): 22.6 MB total, 7.5 MB/process
+    Memory overhead vs serial: 91.7%
+  Data Parallel (4P): 22.6 MB total, 5.6 MB/process
+    Memory overhead vs serial: 91.9%
+  Data Parallel (5P): 22.6 MB total, 4.5 MB/process
+    Memory overhead vs serial: 91.8%
+  Data Parallel (6P): 22.5 MB total, 3.8 MB/process
+    Memory overhead vs serial: 91.4%
+  Data Parallel (7P): 22.7 MB total, 3.2 MB/process
+    Memory overhead vs serial: 92.6%
+  Data Parallel (8P): 22.7 MB total, 2.8 MB/process
+    Memory overhead vs serial: 92.8%
+
+6. LAYER-WISE COMPUTATION BREAKDOWN
+--------------------------------------------------
+
+====================================================================================================
+                                   OPTIMIZATION RECOMMENDATIONS
+====================================================================================================
+
+✓ Best configuration: Data Parallel with 8 processes
+  Speedup: 5.41x
+  Efficiency: 67.6%
+
+⚠ Efficiency drops significantly at higher process counts
+  Recommendation: Use fewer processes for better efficiency
+  Optimal: 8 processes
+
+⚠ Pipeline parallel shows low efficiency
+  Reason: High communication overhead from layer-to-layer transfers
+  Recommendation: Use data parallel for inference workloads
+
+====================================================================================================
+
+Analysis complete!
+Full results available in: results/benchmark_results_detailed.txt
+saurabh@sORo cnn-parallelism % 
